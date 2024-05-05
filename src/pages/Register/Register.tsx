@@ -12,11 +12,12 @@ import { ErrorResponseApi } from 'src/types/ultils.type'
 import { useContext } from 'react'
 import { AppContext } from 'src/contexts/app.context'
 import Button from 'src/components/Button'
+import path from 'src/constants/path'
 
 type FormData = Schema
 
 export default function Register() {
-  const { setIsAuthenticated } = useContext(AppContext)
+  const { setIsAuthenticated, setProfile } = useContext(AppContext)
   const navigate = useNavigate()
   const {
     register,
@@ -36,8 +37,9 @@ export default function Register() {
   const onSubmit = handleSubmit((data) => {
     const body = omit(data, ['confirm_password'])
     registerAccountMutation.mutate(body, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         setIsAuthenticated(true)
+        setProfile(data.data.data.user)
         navigate('/')
       },
       onError: (error) => {
@@ -114,7 +116,7 @@ export default function Register() {
               <div className='mt-8'>
                 <div className='flex items-center justify-center'>
                   <span className='text-slate-400'>Bạn đã có tài khoản?</span>
-                  <Link className='text-red-400 ml-1' to='/login'>
+                  <Link className='text-red-400 ml-1' to={path.login}>
                     Đăng Nhập
                   </Link>
                 </div>

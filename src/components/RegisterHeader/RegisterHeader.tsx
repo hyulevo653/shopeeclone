@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link, useMatch } from 'react-router-dom'
+import path from 'src/constants/path'
 
 export default function RegisterHeader() {
   const registerMatch = useMatch('/register')
@@ -16,7 +17,7 @@ export default function RegisterHeader() {
               </g>
             </svg>
           </Link>
-          <Link to='/register'>
+          <Link to={path.register}>
             <div className='ml-5 text-xl lg:text-2xl'>{isRegister ? 'Đăng ký' : 'Đăng nhập'}</div>
           </Link>
         </nav>
