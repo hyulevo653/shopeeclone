@@ -2,7 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
 import { omit } from 'lodash'
 import { useForm } from 'react-hook-form'
-import { login } from 'src/apis/auth.api'
+import authApi from 'src/apis/auth.api'
 import { ErrorResponseApi } from 'src/types/ultils.type'
 import { schema, Schema } from 'src/utils/rules'
 import { isAxiosUnprocessableEntityError } from 'src/utils/utils'
@@ -12,8 +12,8 @@ import { AppContext } from 'src/contexts/app.context'
 import { useNavigate } from 'react-router-dom'
 import Button from 'src/components/Button'
 
-type FormData = Omit<Schema, 'confirm_password'>
-const loginSchema = schema.omit(['confirm_password'])
+type FormData = Pick<Schema, 'email' | 'password'>
+const loginSchema = schema.pick(['email', 'password'])
 
 export default function Login() {
   const { setIsAuthenticated, setProfile } = useContext(AppContext)
@@ -27,7 +27,7 @@ export default function Login() {
     resolver: yupResolver(loginSchema)
   })
   const loginMutation = useMutation({
-    mutationFn: (body: FormData) => login(body)
+    mutationFn: (body: FormData) => authApi.login(body)
   })
 
   const onSubmit = handleSubmit((data) => {
