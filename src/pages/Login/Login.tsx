@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query'
 import { omit } from 'lodash'
 import { useForm } from 'react-hook-form'
 import authApi from 'src/apis/auth.api'
-import { ErrorResponseApi } from 'src/types/ultils.type'
+import { ErrorResponse } from 'src/types/ultils.type'
 import { schema, Schema } from 'src/utils/rules'
 import { isAxiosUnprocessableEntityError } from 'src/utils/utils'
 import Input from 'src/components/Input'
@@ -38,7 +38,7 @@ export default function Login() {
         navigate('/')
       },
       onError: (error) => {
-        if (isAxiosUnprocessableEntityError<ErrorResponseApi<FormData>>(error)) {
+        if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
           const formError = error.response?.data.data
           if (formError) {
             Object.keys(formError).forEach((key) => {

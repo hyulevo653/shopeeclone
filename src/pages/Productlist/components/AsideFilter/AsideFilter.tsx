@@ -3,7 +3,6 @@ import { Link, createSearchParams, useNavigate } from 'react-router-dom'
 import Button from 'src/components/Button'
 import Input from 'src/components/Input'
 import path from 'src/constants/path'
-import { QueryConfig } from '../../ProductList'
 import { Category } from 'src/types/category.type'
 import classNames from 'classnames'
 import InputNumber from 'src/components/InputNumber'
@@ -13,6 +12,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { NoUndefinedField } from 'src/types/ultils.type'
 import RatingStars from 'src/pages/Productlist/components/RatingStars'
 import { omit } from 'lodash'
+import { QueryConfig } from 'src/hooks/useQueryConfig'
 
 interface Props {
   queryConfig: QueryConfig
@@ -140,7 +140,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
       </Link>
       <div className='bg-gray-300 h-[1px] my-4' />
       <div className='my-5'>
-        <div className=''>Khoản giá</div>
+        <div className=''>Khoảng giá</div>
         <form className='mt-2' onSubmit={onSubmit}>
           <div className='flex items-start'>
             <Controller

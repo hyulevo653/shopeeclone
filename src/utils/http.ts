@@ -2,14 +2,13 @@ import axios, { AxiosError, AxiosInstance } from "axios";
 import { toast } from "react-toastify";
 import HttpStatusCode from "src/constants/httpStatusCode.enum";
 import { AuthResponse } from "src/types/auth.type";
-import { clearLS, getAccessTokenFormLS, setAccessTokenToLS, setProfileToLS } from "./auth";
-import { error } from "console";
+import { clearLS, getAccessTokenFromLS, setAccessTokenToLS, setProfileToLS } from "./auth";
 import path from "src/constants/path";
 class Http {
     instance: AxiosInstance
     private accessToken: string
     constructor() {
-        this.accessToken = getAccessTokenFormLS()
+        this.accessToken = getAccessTokenFromLS()
         this.instance = axios.create({
             baseURL: 'https://api-ecom.duthanhduoc.com/',
             timeout: 10000,
