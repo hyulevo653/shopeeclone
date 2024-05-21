@@ -1,17 +1,17 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import DOMPurify from 'dompurify'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import productApi from 'src/apis/product.api'
 import ProductRating from 'src/components/ProductRating'
 import { Product as ProductType, ProductListConfig } from 'src/types/product.type'
-import { formatCurrency, formatNumberToSocialStyle, getIdFormNameId, rateSale } from 'src/utils/utils'
+import { formatCurrency, formatNumberToSocialStyle, getIdFromNameId, rateSale } from 'src/utils/utils'
 import Product from '../Productlist/components/Product'
 import QuantityContronller from 'src/components/QuantityController'
 import purchaseApi from 'src/apis/purchase.api'
-import { queryClient } from 'src/main'
 import { purchasesStatus } from 'src/constants/purchase'
 import { toast } from 'react-toastify'
+import path from 'src/constants/path'
 
 // dùng lệnh shift ctrl o, tự động xóa import thuwafm sort import, thế thôi long,  hết lỗi rồi :D
 // oke, tự tin chưa, hôm nào long phỏng vấn, review codwe , chưa tự tin nhưng thử xem tn
@@ -20,9 +20,10 @@ import { toast } from 'react-toastify'
 // Mỗi nafgy 1-5 bài leetcode.
 
 export default function ProductDetails() {
+  const queryClient = useQueryClient()
   const [buyCount, setBuyCount] = useState(1)
   const { nameId } = useParams()
-  const id = getIdFormNameId(nameId as string)
+  const id = getIdFromNameId(nameId as string)
   const { data: productDetailData } = useQuery({
     queryKey: ['product', id],
     queryFn: () => productApi.getProductDetail(id as string)
@@ -63,10 +64,10 @@ export default function ProductDetails() {
       setCurrentIndexImages((prev) => [prev[0] - 1, prev[1] - 1])
     }
   }
+  const navigate = useNavigate()
   // const addToCartMutation = useMutation(purchaseApi.addToCart)
-  // chắc version mới nó bỏ cách viết trên r, ok long, code clean tý nhé huy, cái nào ko dùng thì xóa đi, như mấy code import kìa. ok long
   const addToCartMutation = useMutation({
-    mutationFn: (body: { buy_count: number; product_id: string }) => purchaseApi.addToCart(body) // xong nha
+    mutationFn: (body: { buy_count: number; product_id: string }) => purchaseApi.addToCart(body)
   })
 
   const chooseActive = (img: string) => {
@@ -108,6 +109,16 @@ export default function ProductDetails() {
         }
       }
     )
+  }
+
+  const buyNow = async () => {
+    const res = await addToCartMutation.mutateAsync({ buy_count: buyCount, product_id: product?._id as string })
+    const purchase = res.data.data
+    navigate(path.cart, {
+      state: {
+        purchaseId: purchase._id
+      }
+    })
   }
 
   if (!product) return null
@@ -223,7 +234,10 @@ export default function ProductDetails() {
                   />
                   Thêm vào giỏ hàng
                 </button>
-                <button className='ml-4 flex h-12 min-w-[5rem] items-center justify-center rounded-sm bg-orange px-5 capitalize text-white shadow-sm outline-none hover:bg-orange/90'>
+                <button
+                  onClick={buyNow}
+                  className='ml-4 flex h-12 min-w-[5rem] items-center justify-center rounded-sm bg-orange px-5 capitalize text-white shadow-sm outline-none hover:bg-orange/90'
+                >
                   Mua ngay
                 </button>
               </div>

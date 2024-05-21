@@ -13,6 +13,7 @@ import { NoUndefinedField } from 'src/types/ultils.type'
 import RatingStars from 'src/pages/Productlist/components/RatingStars'
 import { omit } from 'lodash'
 import { QueryConfig } from 'src/hooks/useQueryConfig'
+import InputV2 from 'src/components/InputV2'
 
 interface Props {
   queryConfig: QueryConfig
@@ -143,7 +144,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
         <div className=''>Khoảng giá</div>
         <form className='mt-2' onSubmit={onSubmit}>
           <div className='flex items-start'>
-            <Controller
+            {/* <Controller
               control={control}
               name='price_min'
               render={({ field }) => {
@@ -161,6 +162,18 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
                     }}
                   />
                 )
+              }}
+            /> */}
+            <InputV2
+              control={control}
+              name='price_min'
+              type='number'
+              placeholder='₫ TỪ'
+              className='grow'
+              classNameError='hidden'
+              classNameInput='p-1 w-full outline-none border border-gray-300p-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
+              onChange={() => {
+                trigger('price_max')
               }}
             />
             <div className='mx-2 mt-2 shrink-0'>-</div>

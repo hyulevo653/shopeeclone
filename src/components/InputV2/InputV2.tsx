@@ -1,54 +1,68 @@
-import { forwardRef, InputHTMLAttributes, useState } from 'react'
+import { InputHTMLAttributes, useState } from 'react'
+import { FieldValues, FieldPath, useController, UseControllerProps } from 'react-hook-form'
 
-export interface InputNumberProps extends InputHTMLAttributes<HTMLInputElement> {
-  errorMessage?: string
+export type InputNumberProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+> = {
   classNameInput?: string
   classNameError?: string
-}
+} & InputHTMLAttributes<HTMLInputElement> &
+  UseControllerProps<TFieldValues, TName>
 
-const InputV2 = forwardRef<HTMLInputElement, InputNumberProps>(function InputNumberInner(
-  {
-    errorMessage,
+function InputV2<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+>(props: InputNumberProps<TFieldValues, TName>) {
+  const {
+    type,
+    onChange,
     className,
     classNameInput = 'p-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm',
     classNameError = 'mt-1 text-red-600 min-h-[1.25rem] text-sm',
-    onChange,
-    value,
+    value = '',
     ...rest
-  },
-  ref
-) {
-  const [localValue, setLocalValue] = useState<string>(value as string)
+  } = props
+  const { field, fieldState } = useController(props)
+  const [localValue, setLocalValue] = useState<string>(field.value)
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target
-    if (/^\d+$/.test(value) || value === '') {
+    const valueFromInput = event.target.value
+    const numberCondition = type === 'number' && (/^\d+$/.test(valueFromInput) || valueFromInput === '')
+    if (numberCondition || type !== 'number') {
+      // Cập nhật localValue state
+      setLocalValue(valueFromInput)
+      // Gọi field.onChange để cập nhật vào state React Hook Form
+      field.onChange(event)
       // Thực thi onChange callback từ bên ngoài truyền vào props
       onChange && onChange(event)
-      // Cập nhật localValue state
-      setLocalValue(value)
     }
   }
+
   return (
     <div className={className}>
-      <input
-        className={classNameInput}
-        onChange={handleChange}
-        value={value === undefined ? localValue : value}
-        {...rest}
-        ref={ref}
-      />
-      <div className={classNameError}>{errorMessage}</div>
+      <input className={classNameInput} {...rest} {...field} onChange={handleChange} value={value || localValue} />
+      <div className={classNameError}>{fieldState.error?.message}</div>
     </div>
   )
-})
+}
 
 export default InputV2
 
-function Hexa(props: { name: string; lastName: string }) {
-  return null
-}
+// type Gen<TFunc> = {
+//   getName: TFunc
+// }
 
-function App() {
-  return <Hexa name='duoc' lastName='duoc' />
-}
+// // eslint-disable-next-line @typescript-eslint/no-unused-vars
+// function Hexa<TFunc extends () => string, TLastName extends ReturnType<TFunc>>(props: {
+//   person: Gen<TFunc>
+//   lastName: TLastName
+// }) {
+//   return null
+// }
+
+// const handleName: () => 'Duoc' = () => 'Duoc'
+
+// function App() {
+//   return <Hexa person={{ getName: handleName }} lastName='Duoc' />
+// }
