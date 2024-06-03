@@ -80,7 +80,7 @@ export default function Profile() {
     return file ? URL.createObjectURL(file) : ''
   }, [file])
 
-  const { data: profileData, refetch } = useQuery({
+  const { data: profileData } = useQuery({
     queryKey: ['profile'],
     queryFn: userApi.getProfile
   })
