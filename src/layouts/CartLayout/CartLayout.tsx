@@ -1,4 +1,4 @@
-import React from 'react'
+
 import CartHeader from 'src/components/CartHeader'
 import Footer from 'src/components/Footer'
 

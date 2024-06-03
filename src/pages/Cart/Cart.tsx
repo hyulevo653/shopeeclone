@@ -43,12 +43,10 @@ export default function Cart() {
     }
   })
   const location = useLocation()
-  console.log(location)
   const choosenPurchaseIdFromLocation = (location.state as { purchaseId: string } | null)?.purchaseId
   const purchasesInCart = purchasesInCartData?.data.data
   const isAllChecked = useMemo(() => extendedPurchases.every((purchase) => purchase.checked), [extendedPurchases])
   const checkedPurchases = useMemo(() => extendedPurchases.filter((purchase) => purchase.checked), [extendedPurchases])
-  // console.log(checkedPurchases)
   const checkedPurchasesCount = checkedPurchases.length
   const totalCheckedPurchasePrice = useMemo(
     () =>
@@ -208,7 +206,7 @@ export default function Cart() {
                                       name: purchase.product.name,
                                       id: purchase.product._id
                                     })}`}
-                                    className='text-left line-clamp-2 text-left'
+                                    className='text-left line-clamp-2'
                                   >
                                     {purchase.product.name}
                                   </Link>
@@ -300,7 +298,7 @@ export default function Cart() {
                 <Button
                   className='mt-5 flex h-10 w-52 items-center justify-center bg-red-500 text-sm uppercase text-white hover:bg-red-600 sm:ml-4 sm:mt-0'
                   onClick={handleBuyPurchases}
-                  disabled={buyProductsMutation.isLoading}
+                  disabled={buyProductsMutation.isPending}
                 >
                   Mua hàng
                 </Button>

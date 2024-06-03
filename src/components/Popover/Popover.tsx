@@ -1,7 +1,6 @@
 import { FloatingPortal, arrow, useFloating, shift, offset, Placement } from '@floating-ui/react-dom-interactions'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ElementType, useId, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
 
 interface Props {
   children: React.ReactNode

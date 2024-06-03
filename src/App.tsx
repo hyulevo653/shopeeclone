@@ -1,24 +1,39 @@
-import { ToastContainer } from 'react-toastify'
 import useRouteElements from './useRouteElements'
+import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { useContext, useEffect } from 'react'
-import { localStorageEventTarget } from './utils/auth'
+import { useEffect, useContext } from 'react'
+import { LocalStorageEventTarget } from './utils/auth'
 import { AppContext } from './contexts/app.context'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { HelmetProvider } from 'react-helmet-async'
+import ErrorBoundary from './components/ErrorPoundary/ErrorPoundary'
+
+/**
+ * Khi url thay đổi thì các component nào dùng các hook như
+ * useRoutes, useParmas, useSearchParams,...
+ * sẽ bị re-render.
+ * Ví dụ component `App` dưới đây bị re-render khi mà url thay đổi
+ * vì dùng `useRouteElements` (đây là customhook của `useRoutes`)
+ */
 
 function App() {
   const routeElements = useRouteElements()
   const { reset } = useContext(AppContext)
   useEffect(() => {
-    localStorageEventTarget.addEventListener('clearLS', reset)
+    LocalStorageEventTarget.addEventListener('clearLS', reset)
     return () => {
-      localStorageEventTarget.removeEventListener('clearLS', reset)
+      LocalStorageEventTarget.removeEventListener('clearLS', reset)
     }
   }, [reset])
+
   return (
-    <div>
-      {routeElements}
-      <ToastContainer />
-    </div>
+    <HelmetProvider>
+      <ErrorBoundary>
+        {routeElements}
+        <ToastContainer />
+      </ErrorBoundary>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </HelmetProvider>
   )
 }
 

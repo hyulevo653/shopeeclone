@@ -12,6 +12,10 @@ import purchaseApi from 'src/apis/purchase.api'
 import { purchasesStatus } from 'src/constants/purchase'
 import { toast } from 'react-toastify'
 import path from 'src/constants/path'
+import { Helmet } from 'react-helmet-async'
+import { convert } from 'html-to-text'
+// import { Helmet } from 'react-helmet-async'
+// import { convert } from 'html-to-text'
 
 // dùng lệnh shift ctrl o, tự động xóa import thuwafm sort import, thế thôi long,  hết lỗi rồi :D
 // oke, tự tin chưa, hôm nào long phỏng vấn, review codwe , chưa tự tin nhưng thử xem tn
@@ -45,7 +49,7 @@ export default function ProductDetails() {
   const { data: productsData } = useQuery({
     queryKey: ['products', queryConfig],
     queryFn: () => {
-      return productApi.getProduct(queryConfig)
+      return productApi.getProducts(queryConfig)
     },
     staleTime: 3 * 60 * 1000,
     enabled: Boolean(product)
@@ -100,16 +104,21 @@ export default function ProductDetails() {
   }
 
   const addToCart = () => {
-    addToCartMutation.mutate(
-      { buy_count: buyCount, product_id: product._id as string },
-      {
-        onSuccess: (data) => {
-          toast.success(data.data.message, { autoClose: 1500 })
-          queryClient.invalidateQueries({ queryKey: ['purchases', { status: purchasesStatus.inCart }] })
+    if (product) {
+      addToCartMutation.mutate(
+        { buy_count: buyCount, product_id: product._id as string },
+        {
+          onSuccess: (data) => {
+            toast.success(data.data.message, { autoClose: 1500 })
+            queryClient.invalidateQueries({ queryKey: ['purchases', { status: purchasesStatus.inCart }] })
+          }
         }
-      }
-    )
+      )
+    } else {
+      toast.error('Không tìm thấy sản phẩm', { autoClose: 1500 })
+    }
   }
+  
 
   const buyNow = async () => {
     const res = await addToCartMutation.mutateAsync({ buy_count: buyCount, product_id: product?._id as string })
@@ -125,6 +134,17 @@ export default function ProductDetails() {
 
   return (
     <div className='bg-gray-200 py-6'>
+           <Helmet>
+        <title>{product.name} | Shopee Clone</title>
+        <meta
+          name='description'
+          content={convert(product.description, {
+            limits: {
+              maxInputLength: 150
+            }
+          })}
+        />
+      </Helmet>
       <div className='bg-white p-4 shadow'>
         <div className='container'>
           <div className='grid grid-cols-12 gap-9'>
@@ -195,7 +215,7 @@ export default function ProductDetails() {
                   <ProductRating
                     rating={product.rating}
                     activeClassname='fill-orange text-orange h-4 w-4 '
-                    nonactiveClassname='fill-orange text-gray h-4 w-4'
+                    nonActiveClassname='fill-orange text-gray h-4 w-4'
                   />
                 </div>
                 <div className='mx-4 h-4 w-[1px] bg-gray-300'></div>

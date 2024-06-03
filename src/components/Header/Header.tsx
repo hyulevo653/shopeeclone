@@ -1,14 +1,9 @@
-import { Link, createSearchParams, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Popover from '../Popover'
 import { useQuery } from '@tanstack/react-query'
 import { AppContext } from 'src/contexts/app.context'
 import { useContext } from 'react'
 import path from 'src/constants/path'
-import useQueryConfig from 'src/hooks/useQueryConfig'
-import { useForm } from 'react-hook-form'
-import { Schema, schema } from 'src/utils/rules'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { omit } from 'lodash'
 import { purchasesStatus } from 'src/constants/purchase'
 import purchaseApi from 'src/apis/purchase.api'
 import noproduct from 'src/assets/images/no-product.png'
@@ -16,8 +11,6 @@ import { formatCurrency } from 'src/utils/utils'
 import NavHeader from '../NavHeader'
 import useSearchProducts from 'src/hooks/useSearchProducts'
 
-type FormData = Pick<Schema, 'name'>
-const nameSchema = schema.pick(['name'])
 const MAX_PURCHASES = 5
 
 export default function Header() {
@@ -31,8 +24,8 @@ export default function Header() {
     queryFn: () => purchaseApi.getPurchases({ status: purchasesStatus.inCart }),
     enabled: isAuthenticated
   })
-  console.log()
   const purchasesInCart = purchasesInCartData?.data.data
+  console.log('purchaseincart : ',purchasesInCart)
 
   return (
     <div className='pb-5 pt-2 bg-[linear-gradient(-180deg,#f53d2d,#f63)] text-white'>
